@@ -1,4 +1,4 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <drawable name="ic_launcher">@drawable/ic_foot</drawable>
+    <color name="logo_background">#F57B0B</color>
 </resources>
