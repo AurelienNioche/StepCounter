@@ -85,5 +85,11 @@ lint/tmp/
 # lint/reports/
 
 
-BkgStepCounter/Library/PackageCache/*
-.EXAMPLEunity-background-service/Unity3DProject/Library/PackageCache/*
+# Cache from Unity
+StepCounter/Library/PackageCache/*
+
+# Project used as reference
+.EXAMPLEunity-background-service/
+
+# Other Unity stuff
+*.sln

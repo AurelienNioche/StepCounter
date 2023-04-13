@@ -1,0 +1,29 @@
+﻿<Properties StartupConfiguration="{2638C4EE-E05C-FC89-16C9-F90FE78402E4}|">
+  <MonoDevelop.Ide.Workspace ActiveConfiguration="Debug" />
+  <MultiItemStartupConfigurations />
+  <MonoDevelop.Ide.DebuggingService.Breakpoints>
+    <BreakpointStore />
+  </MonoDevelop.Ide.DebuggingService.Breakpoints>
+  <MonoDevelop.Ide.Workbench ActiveDocument="Assets/Plugins/Android/AndroidManifest.xml">
+    <Files>
+      <File FileName="Assets/Scripts/Controller.cs" Line="57" Column="23" />
+      <File FileName="Assets/Plugins/Android/AndroidManifest.xml" Line="19" Column="9" />
+    </Files>
+    <Pads>
+      <Pad Id="ProjectPad">
+        <State name="__root__">
+          <Node name="BkgStepCounter" expanded="True">
+            <Node name="Assets" expanded="True">
+              <Node name="Plugins" expanded="True">
+                <Node name="Android" expanded="True" />
+              </Node>
+              <Node name="Scripts" expanded="True" />
+            </Node>
+          </Node>
+        </State>
+      </Pad>
+    </Pads>
+  </MonoDevelop.Ide.Workbench>
+  <MonoDevelop.Ide.ItemProperties.Assembly-CSharp PreferredExecutionTarget="2d4682ba-13d4-43b7-8ca8-15e10cd8c40c" />
+  <MonoDevelop.Ide.DebuggingService.PinnedWatches />
+</Properties>
