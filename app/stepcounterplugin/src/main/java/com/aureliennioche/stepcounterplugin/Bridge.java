@@ -1,47 +1,39 @@
 package com.aureliennioche.stepcounterplugin;
 
-import android.Manifest;
+// import android.Manifest;
+import android.app.Activity;
 import android.app.ActivityManager;
 import android.content.Context;
 import android.content.Intent;
-import android.content.pm.PackageManager;
-import android.os.Build;
+// import android.content.pm.PackageManager;
+// import android.os.Build;
 import android.util.Log;
-//import android.Manifest;
-//import android.app.Activity;
-//import android.app.ActivityManager;
-//import android.content.Context;
-//import android.content.Intent;
-//import android.content.pm.PackageManager;
-import android.os.Bundle;
+// import android.Manifest;
+// import android.app.Activity;
+// import android.app.ActivityManager;
+// import android.content.Context;
+// import android.content.Intent;
+// import android.content.pm.PackageManager;
+// import android.os.Bundle;
 
-//import androidx.activity.result.ActivityResultLauncher;
-//import androidx.activity.result.contract.ActivityResultContracts;
-//import androidx.annotation.NonNull;
-import androidx.annotation.NonNull;
-import androidx.annotation.RequiresApi;
-import androidx.appcompat.app.AppCompatActivity;
-import androidx.core.app.ActivityCompat;
-import androidx.core.content.ContextCompat;
-//import androidx.core.app.ActivityCompat;
-//import androidx.core.content.ContextCompat;
+// import androidx.activity.result.ActivityResultLauncher;
+// import androidx.activity.result.contract.ActivityResultContracts;
+// import androidx.annotation.NonNull;
+// import androidx.annotation.NonNull;
+// import androidx.annotation.RequiresApi;
+// import androidx.appcompat.app.AppCompatActivity;
+// import androidx.core.app.ActivityCompat;
+// import androidx.core.content.ContextCompat;
+// import androidx.core.app.ActivityCompat;
+// import androidx.core.content.ContextCompat;
 
-@RequiresApi(api = Build.VERSION_CODES.TIRAMISU)
+// @RequiresApi(api = Build.VERSION_CODES.TIRAMISU)
 public class Bridge {
 
-    AppCompatActivity mainActivity;
+    static String tag = "Bridge";
 
-    String tag = this.getClass().getSimpleName();
-
-    public Bridge(AppCompatActivity mainActivity)
-    {
-        Log.d(tag, "Constructing the bridge");
-        this.mainActivity = mainActivity;  // Set the initial value for the class attribute x
-    }
-
-    // ------------------------------------------------------------------------------ //
-
-    public void launchService() {
+    // Important! Method needs to be static to be able to be called by Unity
+    public static void launchService(Activity mainActivity) {
         Context context = mainActivity.getApplicationContext();
         if (isServiceAlive(context, StepService.class)) {
             Log.d(tag, "Service is already running");

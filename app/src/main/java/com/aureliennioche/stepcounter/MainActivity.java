@@ -37,9 +37,8 @@ public class MainActivity extends AppCompatActivity {
     }
 
     public void allPermissionsHaveBeenGranted() {
-         Log.d(tag, "start the bridge");
-         Bridge bridge = new Bridge(this);
-         bridge.launchService();
+         Log.d(tag, "Start the bridge");
+         Bridge.launchService(this);
     }
 
     // ------------------------------------------------------------------------------------------ //
