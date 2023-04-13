@@ -1,4 +1,4 @@
-package com.aureliennioche.stepcounter;
+package com.aureliennioche.stepcounterplugin;
 
 import android.content.BroadcastReceiver;
 import android.content.Context;

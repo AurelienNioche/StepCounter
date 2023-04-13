@@ -1,4 +1,4 @@
-package com.aureliennioche.stepcounter;
+package com.aureliennioche.stepcounterplugin;
 
 import android.app.Notification;
 import android.app.NotificationChannel;
@@ -11,64 +11,18 @@ import android.hardware.Sensor;
 import android.hardware.SensorEvent;
 import android.hardware.SensorEventListener;
 import android.hardware.SensorManager;
-import android.os.Handler;
-import android.os.HandlerThread;
 import android.os.IBinder;
-import android.os.Looper;
-import android.os.Message;
 import android.util.Log;
 import android.widget.Toast;
-import android.os.Process;
 
 public class StepService extends Service implements SensorEventListener {
     private static final int ONGOING_NOTIFICATION_ID = 1234;
     private static final String CHANNEL_ID = "tamere";
-    // private Looper serviceLooper;
-    // private ServiceHandler serviceHandler;
-
     SensorManager sensorManager;
-
     String tag = this.getClass().getSimpleName();
 
-//    // Handler that receives messages from the thread
-//    private final class ServiceHandler extends Handler {
-//        public ServiceHandler(Looper looper) {
-//            super(looper);
-//        }
-//        @Override
-//        public void handleMessage(Message msg) {
-//            // Normally we would do some work here, like download a file.
-//            // For our sample, we just sleep for 5 seconds.
-//            try {
-//                Log.d(tag,"j'ai baise");
-//                Thread.sleep(30*1000);
-//                Log.d(tag,"ta mere");
-//            } catch (InterruptedException e) {
-//                // Restore interrupt status.
-//                Log.d(tag,"coitus interruptus");
-//                Thread.currentThread().interrupt();
-//            }
-//            // Stop the service using the startId, so that we don't stop
-//            // the service in the middle of handling another job
-//            stopSelf(msg.arg1);
-//        }
-//    }
-
     @Override
-    public void onCreate() {
-
-        // Start up the thread running the service. Note that we create a
-        // separate thread because the service normally runs in the process's
-        // main thread, which we don't want to block. We also make it
-        // background priority so CPU-intensive work doesn't disrupt our UI.
-//        HandlerThread thread = new HandlerThread("ServiceStartArguments",
-//                Process.THREAD_PRIORITY_BACKGROUND);
-//        thread.start();
-
-        // Get the HandlerThread's Looper and use it for our Handler
-        // serviceLooper = thread.getLooper();
-        // serviceHandler = new ServiceHandler(serviceLooper);
-    }
+    public void onCreate() {}
 
     @Override
     public int onStartCommand(Intent intent, int flags, int startId) {
@@ -87,7 +41,7 @@ public class StepService extends Service implements SensorEventListener {
         // PendingIntent.FLAG_MUTABLE instead.
         Intent notificationIntent = null;
         if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.TIRAMISU) {
-            notificationIntent = new Intent(this, MainActivity.class);
+            notificationIntent = new Intent(this, Bridge.class);
         }
         PendingIntent pendingIntent =
                 PendingIntent.getActivity(this, 0, notificationIntent,
@@ -97,14 +51,14 @@ public class StepService extends Service implements SensorEventListener {
                 new Notification.Builder(this, CHANNEL_ID)
                         .setContentTitle(getText(R.string.notification_title))
                         .setContentText(getText(R.string.notification_message))
-                        .setSmallIcon(R.drawable.ic_launcher)
+                        .setSmallIcon(R.drawable.ic_foot)
                         .setContentIntent(pendingIntent)
                          // .setTicker(getText(R.string.ticker_text))
                         .build();
 
         initSensorManager();
 
-// Notification ID cannot be 0.
+        // Notification ID cannot be 0.
         startForeground(ONGOING_NOTIFICATION_ID, notification);
 
         // If we get killed, after returning from here, restart
@@ -141,11 +95,11 @@ public class StepService extends Service implements SensorEventListener {
 
     @Override
     public void onSensorChanged(SensorEvent sensorEvent) {
-        Log.d(tag, "onSensorChanged!!!!!!: "+sensorEvent.values[0]);
+        Log.d(tag, "onSensorChanged: "+sensorEvent.values[0]);
     }
 
     @Override
-    public void onAccuracyChanged(Sensor sensor, int i) {    }
+    public void onAccuracyChanged(Sensor sensor, int i) {}
 
     public void initSensorManager(){
         sensorManager = (SensorManager) getSystemService(Context.SENSOR_SERVICE);

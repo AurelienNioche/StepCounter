@@ -1,79 +1,75 @@
 package com.aureliennioche.stepcounter;
 
-import androidx.activity.result.ActivityResultLauncher;
-import androidx.activity.result.contract.ActivityResultContracts;
+import androidx.annotation.NonNull;
 import androidx.annotation.RequiresApi;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
 
-import android.app.ActivityManager;
-import android.content.BroadcastReceiver;
+import android.Manifest;
 import android.content.Context;
-import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.os.Build;
 import android.os.Bundle;
 import android.util.Log;
 
-import android.Manifest;
+import com.aureliennioche.stepcounterplugin.Bridge;
 
 @RequiresApi(api = Build.VERSION_CODES.TIRAMISU)
 public class MainActivity extends AppCompatActivity {
 
     String tag = this.getClass().getSimpleName();
 
+    private static final int POST_NOTIFICATIONS_REQUEST_CODE = 0; // Arbitrary
+    private static final int ACTIVITY_RECOGNITION_REQUEST_CODE = 1; // Arbitrary
+
     @RequiresApi(api = Build.VERSION_CODES.TIRAMISU)
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+        permissionChecks();
+    }
 
+    public void permissionChecks() {
         // Begin by requesting the notification permission
         requestNotificationPermission();
+    }
+
+    public void allPermissionsHaveBeenGranted() {
+         Log.d(tag, "start the bridge");
+         Bridge bridge = new Bridge(this);
+         bridge.launchService();
     }
 
     // ------------------------------------------------------------------------------------------ //
 
     void requestNotificationPermission() {
+        Log.d(tag, "Checking the permission for notifications");
+        Context context = getApplicationContext();
         if (ContextCompat.checkSelfPermission(
-                getApplicationContext(),
-                Manifest.permission.POST_NOTIFICATIONS) ==
+                context,
+                android.Manifest.permission.POST_NOTIFICATIONS) ==
                 PackageManager.PERMISSION_GRANTED) {
             // You can use the API that requires the permission.
             notificationPermissionHasBeenGranted();
         } else {
             // You can directly ask for the permission.
             // The registered ActivityResultCallback gets the result of this request.
-            requestNotificationPermissionLauncher.launch(
-                    Manifest.permission.POST_NOTIFICATIONS);
+            ActivityCompat.requestPermissions(this,
+                    new String[] { Manifest.permission.POST_NOTIFICATIONS },
+                    POST_NOTIFICATIONS_REQUEST_CODE);
         }
     }
 
-    // Register the permissions callback, which handles the user's response to the
-    // system permissions dialog. Save the return value, an instance of
-    // ActivityResultLauncher, as an instance variable.
-    private final ActivityResultLauncher<String> requestNotificationPermissionLauncher =
-            registerForActivityResult(new ActivityResultContracts.RequestPermission(), isGranted -> {
-                if (isGranted) {
-                    // Permission is granted. Continue the action or workflow in your
-                    // app.
-                    notificationPermissionHasBeenGranted();
-                } else {
-                    // Explain to the user that the feature is unavailable because the
-                    // feature requires a permission that the user has denied. At the
-                    // same time, respect the user's decision. Don't link to system
-                    // settings in an effort to convince the user to change their
-                    // decision.
-                    Log.d(tag, "User is an ass: he refused the notifications");
-                }
-            });
 
     void notificationPermissionHasBeenGranted() {
+        Log.d(tag,"Permission for notifications has been granted!\n" +
+                "Requesting activity permission now");
         requestActivityPermission();
     }
+    // ----------------------------------------------------------- //
 
-
-    // ------------------------------------------------------------------------------------------ //
 
     void requestActivityPermission() {
         if (ContextCompat.checkSelfPermission(
@@ -85,56 +81,57 @@ public class MainActivity extends AppCompatActivity {
         } else {
             // You can directly ask for the permission.
             // The registered ActivityResultCallback gets the result of this request.
-            requestActivityPermissionLauncher.launch(
-                    Manifest.permission.ACTIVITY_RECOGNITION);
+            ActivityCompat.requestPermissions(this,
+                    new String[] { Manifest.permission.ACTIVITY_RECOGNITION },
+                    ACTIVITY_RECOGNITION_REQUEST_CODE);
         }
     }
-
-    // Register the permissions callback, which handles the user's response to the
-    // system permissions dialog. Save the return value, an instance of
-    // ActivityResultLauncher, as an instance variable.
-    private final ActivityResultLauncher<String> requestActivityPermissionLauncher =
-            registerForActivityResult(new ActivityResultContracts.RequestPermission(), isGranted -> {
-                if (isGranted) {
-                    // Permission is granted. Continue the action or workflow in your
-                    // app.
-                    activityPermissionHasBeenGranted();
-                } else {
-                    // Explain to the user that the feature is unavailable because the
-                    // feature requires a permission that the user has denied. At the
-                    // same time, respect the user's decision. Don't link to system
-                    // settings in an effort to convince the user to change their
-                    // decision.
-                    Log.d(tag, "User is an ass: he refused the activity monitoring");
-                }});
 
     void activityPermissionHasBeenGranted() {
-        launchService();
+        allPermissionsHaveBeenGranted();
     }
 
-    // ------------------------------------------------------------------------------ //
+    // ----------------------------------------------------------- //
 
-    void launchService() {
-        Context context = getApplicationContext();
-        if (isServiceAlive(context, StepService.class)) {
-            Log.d(tag, "Service is already running");
-        } else {
-            Log.d(tag, "Creating the service");
-            Intent intent = new Intent(context, StepService.class);
-            context.startForegroundService(intent);
-
-            Log.d(tag, "The service is supposed to be running now");
+    @Override
+    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions,
+                                           @NonNull int[] grantResults) {
+        Log.d(tag, "Result arrived");
+        super.onRequestPermissionsResult(requestCode, permissions, grantResults);
+        switch (requestCode) {
+            case POST_NOTIFICATIONS_REQUEST_CODE:
+                // If request is cancelled, the result arrays are empty.
+                if (grantResults.length > 0 &&
+                        grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+                    // Permission is granted. Continue the action or workflow
+                    // in your app.
+                    notificationPermissionHasBeenGranted();
+                } else {
+                    // Explain to the user that the feature is unavailable because
+                    // the feature requires a permission that the user has denied.
+                    // At the same time, respect the user's decision. Don't link to
+                    // system settings in an effort to convince the user to change
+                    // their decision.
+                    Log.w(tag, "User is an ass: he refused the notifications");
+                }
+                return;
+            case ACTIVITY_RECOGNITION_REQUEST_CODE:
+                // If request is cancelled, the result arrays are empty.
+                if (grantResults.length > 0 &&
+                        grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+                    // Permission is granted. Continue the action or workflow
+                    // in your app.
+                    activityPermissionHasBeenGranted();
+                } else {
+                    // Explain to the user that the feature is unavailable because
+                    // the feature requires a permission that the user has denied.
+                    // At the same time, respect the user's decision. Don't link to
+                    // system settings in an effort to convince the user to change
+                    // their decision.
+                    ActivityCompat.requestPermissions(this,
+                            new String[] { Manifest.permission.ACTIVITY_RECOGNITION },
+                            ACTIVITY_RECOGNITION_REQUEST_CODE);
+                }
         }
-    }
-
-    @SuppressWarnings("deprecation")
-    public static boolean isServiceAlive(Context context, Class<?> serviceClass) {
-        ActivityManager manager = (ActivityManager) context.getSystemService(Context.ACTIVITY_SERVICE);
-        for (ActivityManager.RunningServiceInfo service : manager.getRunningServices(Integer.MAX_VALUE)) {
-            if (serviceClass.getName().equals(service.service.getClassName())) {
-                return true;
-            }
-        }
-        return false;
     }
 }

@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="notification_title">tamere</string>
+    <string name="notification_message">Je la prends et je la retourne</string>
+    <string name="channel_name">tamere</string>
+    <string name="channel_description">Va te faire ***</string>
+</resources>

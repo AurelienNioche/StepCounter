@@ -5,7 +5,7 @@
     <uses-permission android:name="android.permission.POST_NOTIFICATIONS" />
     <uses-permission android:name="android.permission.ACTIVITY_RECOGNITION" />
     <uses-permission android:name="android.permission.RECEIVE_BOOT_COMPLETED" />
-    <!-- To avoid error 'attributionTag ...' which is thrown when service is restarted after a reboot-->
+<!--     To avoid error 'attributionTag ...' which is thrown when service is restarted after a reboot-->
     <attribution
         android:tag=""
         android:label="@string/dummy_attribution_label" />
@@ -17,7 +17,7 @@
         android:label="@string/app_name"
         android:supportsRtl="true"
         android:theme="@style/Theme.StepCounter"
-        tools:targetApi="31">
+        tools:targetApi="33">
         <activity
             android:name=".MainActivity"
             android:exported="true">
@@ -26,12 +26,13 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-        <service android:name=".StepService" />
-        <receiver android:name=".AutoStart"
+        <service android:name="com.aureliennioche.stepcounterplugin.StepService"> </service>
+        <receiver
+            android:name="com.aureliennioche.stepcounterplugin.AutoStart"
+            android:enabled="true"
             android:exported="true">
             <intent-filter>
                 <action android:name="android.intent.action.BOOT_COMPLETED" />
-                <action android:name="android.intent.action.QUICKBOOT_POWERON" />
             </intent-filter>
         </receiver>
     </application>
