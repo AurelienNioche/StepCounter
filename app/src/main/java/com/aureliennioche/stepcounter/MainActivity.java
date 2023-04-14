@@ -1,17 +1,17 @@
 package com.aureliennioche.stepcounter;
 
-import androidx.annotation.NonNull;
-import androidx.annotation.RequiresApi;
-import androidx.appcompat.app.AppCompatActivity;
-import androidx.core.app.ActivityCompat;
-import androidx.core.content.ContextCompat;
-
 import android.Manifest;
 import android.content.Context;
 import android.content.pm.PackageManager;
 import android.os.Build;
 import android.os.Bundle;
 import android.util.Log;
+
+import androidx.annotation.NonNull;
+import androidx.annotation.RequiresApi;
+import androidx.appcompat.app.AppCompatActivity;
+import androidx.core.app.ActivityCompat;
+import androidx.core.content.ContextCompat;
 
 import com.aureliennioche.stepcounterplugin.Bridge;
 
@@ -38,7 +38,12 @@ public class MainActivity extends AppCompatActivity {
 
     public void allPermissionsHaveBeenGranted() {
          Log.d(tag, "Start the bridge");
-         Bridge.launchService(this);
+         Bridge bridge = new Bridge(this);
+         bridge.launchService();
+
+         Log.d(tag, "Reading database");
+         int numberOfStep = bridge.numberOfStepSinceLastBoot();
+         Log.d(tag, "Last number is" + numberOfStep);
     }
 
     // ------------------------------------------------------------------------------------------ //

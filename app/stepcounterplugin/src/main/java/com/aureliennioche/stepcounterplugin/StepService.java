@@ -1,5 +1,6 @@
 package com.aureliennioche.stepcounterplugin;
 
+import android.annotation.SuppressLint;
 import android.app.Notification;
 import android.app.NotificationChannel;
 import android.app.NotificationManager;
@@ -15,25 +16,27 @@ import android.os.IBinder;
 import android.util.Log;
 import android.widget.Toast;
 
+import java.sql.Date;
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
+import java.util.List;
+
 public class StepService extends Service implements SensorEventListener {
     private static final int ONGOING_NOTIFICATION_ID = 1234;
-    private static final String CHANNEL_ID = "tamere";
+    private static final String CHANNEL_ID = "channel_id";
     SensorManager sensorManager;
     String tag = this.getClass().getSimpleName();
 
+    StepDao stepDao;
+
     @Override
-    public void onCreate() {}
+    public void onCreate() {
+        stepDao = StepDatabase.getInstance(this.getApplicationContext()).stepDao();
+    }
 
     @Override
     public int onStartCommand(Intent intent, int flags, int startId) {
         Log.d(tag, "Service starting");
-        // Toast.makeText(this, "Service starting", Toast.LENGTH_SHORT).show();
-
-        // For each start request, send a message to start a job and deliver the
-        // start ID so we know which request we're stopping when we finish the job
-        // Message msg = serviceHandler.obtainMessage();
-        // msg.arg1 = startId;
-        // serviceHandler.sendMessage(msg);
 
         createNotificationChannel();
 
@@ -81,7 +84,6 @@ public class StepService extends Service implements SensorEventListener {
 
     private void createNotificationChannel() {
 
-
         CharSequence name = getString(R.string.channel_name);
         String description = getString(R.string.channel_description);
         int importance = NotificationManager.IMPORTANCE_DEFAULT;
@@ -95,13 +97,15 @@ public class StepService extends Service implements SensorEventListener {
 
     @Override
     public void onSensorChanged(SensorEvent sensorEvent) {
-        Log.d(tag, "onSensorChanged: "+sensorEvent.values[0]);
+        int sensorValue = (int) sensorEvent.values[0];
+        Log.d(tag, "onSensorChanged: " + sensorValue);
+        recordNewSensorValue(sensorValue);
     }
 
     @Override
     public void onAccuracyChanged(Sensor sensor, int i) {}
 
-    public void initSensorManager(){
+    private void initSensorManager(){
         sensorManager = (SensorManager) getSystemService(Context.SENSOR_SERVICE);
         Sensor countSensor = sensorManager.getDefaultSensor(Sensor.TYPE_STEP_COUNTER);
         if (countSensor!=null){
@@ -110,5 +114,31 @@ public class StepService extends Service implements SensorEventListener {
             Log.e(tag, "Sensor not found");
         }
         Log.d(tag, "Sensor manager initialized");
+    }
+
+    void recordNewSensorValue(int sensorValue) {
+
+        // Erase everything first (we might want to do something else later on)
+        Log.d(tag, "Du passé faisons table rase");
+        stepDao.nukeTable();
+
+        Log.d(tag, "Let's record new stuff");
+        Date sqlDate = new java.sql.Date(System.currentTimeMillis());
+        stepDao.insertStepRecord(new StepRecord(sqlDate, sensorValue));
+
+        // Log what is already in the database (we might want to do something else later on)
+        logRecords();
+    }
+
+    private void logRecords() {
+        Log.d(tag, "Data base records are:");
+        List<StepRecord> stepRecords = stepDao.getAll();
+        for (StepRecord r : stepRecords) {
+            Date date = r.date;
+            @SuppressLint("SimpleDateFormat")
+            DateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd hh:mm:ss");
+            String strDate = dateFormat.format(date);
+            Log.d(tag, "[" + strDate + "] The number of time step is "+ r.stepNumber);
+        }
     }
 }

@@ -1,39 +1,26 @@
 package com.aureliennioche.stepcounterplugin;
 
-// import android.Manifest;
 import android.app.Activity;
 import android.app.ActivityManager;
 import android.content.Context;
 import android.content.Intent;
-// import android.content.pm.PackageManager;
-// import android.os.Build;
 import android.util.Log;
-// import android.Manifest;
-// import android.app.Activity;
-// import android.app.ActivityManager;
-// import android.content.Context;
-// import android.content.Intent;
-// import android.content.pm.PackageManager;
-// import android.os.Bundle;
 
-// import androidx.activity.result.ActivityResultLauncher;
-// import androidx.activity.result.contract.ActivityResultContracts;
-// import androidx.annotation.NonNull;
-// import androidx.annotation.NonNull;
-// import androidx.annotation.RequiresApi;
-// import androidx.appcompat.app.AppCompatActivity;
-// import androidx.core.app.ActivityCompat;
-// import androidx.core.content.ContextCompat;
-// import androidx.core.app.ActivityCompat;
-// import androidx.core.content.ContextCompat;
+import java.util.List;
 
-// @RequiresApi(api = Build.VERSION_CODES.TIRAMISU)
 public class Bridge {
 
-    static String tag = "Bridge";
+    String tag = this.getClass().getSimpleName();
+    Activity mainActivity;
 
-    // Important! Method needs to be static to be able to be called by Unity
-    public static void launchService(Activity mainActivity) {
+    StepDao stepDao;
+
+    public Bridge (Activity mainActivity) {
+        this.mainActivity = mainActivity;
+        stepDao = StepDatabase.getInstance(mainActivity.getApplicationContext()).stepDao();
+    }
+
+    public void launchService() {
         Context context = mainActivity.getApplicationContext();
         if (isServiceAlive(context, StepService.class)) {
             Log.d(tag, "Service is already running");
@@ -55,5 +42,13 @@ public class Bridge {
             }
         }
         return false;
+    }
+
+    public int numberOfStepSinceLastBoot() {
+        List<StepRecord> stepRecords = stepDao.getAll();
+        StepRecord lastStepRecord = stepRecords.get(0);
+        int stepNumber = lastStepRecord.stepNumber;
+        Log.d(tag, "Step number is " + stepNumber);
+        return stepNumber;
     }
 }
