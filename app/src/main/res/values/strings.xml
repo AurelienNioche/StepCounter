@@ -1,9 +1,4 @@
 <resources>
     <string name="app_name">Step Counter</string>
-    <string name="notification_title">Ta mere</string>
-    <string name="notification_message">Je la prends et je la retourne</string>
-    <string name="ticker_text">va te faire f***</string>
-    <string name="channel_name">Ta mere</string>
-    <string name="channel_description">Je vais me faire ta mere</string>
-    <string name="dummy_attribution_label">Va chier</string>
+    <string name="dummy_attribution_label">Dummy attribution label</string>
 </resources>

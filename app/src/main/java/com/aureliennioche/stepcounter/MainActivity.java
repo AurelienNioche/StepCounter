@@ -3,15 +3,21 @@ package com.aureliennioche.stepcounter;
 import android.Manifest;
 import android.content.Context;
 import android.content.pm.PackageManager;
+import android.database.Observable;
 import android.os.Build;
 import android.os.Bundle;
+import android.os.Handler;
 import android.util.Log;
+import android.widget.TextView;
 
 import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 import androidx.annotation.RequiresApi;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
+import androidx.lifecycle.Observer;
+import androidx.lifecycle.ViewModelProvider;
 
 import com.aureliennioche.stepcounterplugin.Bridge;
 
@@ -23,12 +29,49 @@ public class MainActivity extends AppCompatActivity {
     private static final int POST_NOTIFICATIONS_REQUEST_CODE = 0; // Arbitrary
     private static final int ACTIVITY_RECOGNITION_REQUEST_CODE = 1; // Arbitrary
 
+    private NameViewModel model;
+
     @RequiresApi(api = Build.VERSION_CODES.TIRAMISU)
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
         permissionChecks();
+
+
+        TextView nameTextView = findViewById(R.id.central_text);
+
+        // Get the ViewModel.
+        model = new ViewModelProvider(this).get(NameViewModel.class);
+
+        // Create the observer which updates the UI.
+        // Update the UI, in this case, a TextView.
+        final Observer<String> nameObserver = nameTextView::setText;
+
+        // Observe the LiveData, passing in this activity as the LifecycleOwner and the observer.
+        model.getCurrentName().observe(this, nameObserver);
+
+        Bridge bridge = new Bridge(this);
+
+        // Create the Handler object (on the main thread by default)
+        Handler handler = new Handler();
+// Define the code block to be executed
+        Runnable runnableCode = new Runnable() {
+            @Override
+            public void run() {
+
+                int nStep = bridge.numberOfStepSinceLastBoot();
+                model.getCurrentName().setValue(String.valueOf(nStep));
+
+                // Do something here on the main thread
+                Log.d("Handlers", "Called on main thread");
+                // Repeat this the same runnable code block again another 2 seconds
+                // 'this' is referencing the Runnable object
+                handler.postDelayed(this, 3000);
+            }
+        };
+// Start the initial runnable task by posting through the handler
+        handler.post(runnableCode);
     }
 
     public void permissionChecks() {

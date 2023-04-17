@@ -45,9 +45,14 @@ public class Bridge {
     }
 
     public int numberOfStepSinceLastBoot() {
+        int stepNumber = 0;
         List<StepRecord> stepRecords = stepDao.getAll();
-        StepRecord lastStepRecord = stepRecords.get(0);
-        int stepNumber = lastStepRecord.stepNumber;
+        if (stepRecords.size() >0 ) {
+            StepRecord lastStepRecord = stepRecords.get(0);
+            stepNumber = lastStepRecord.stepNumber;
+        } else {
+            Log.w(tag, "Empty database");
+        }
         Log.d(tag, "Step number is " + stepNumber);
         return stepNumber;
     }
