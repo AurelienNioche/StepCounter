@@ -62,4 +62,6 @@ dependencies {
 
     // optional - Paging 3 Integration
     implementation "androidx.room:room-paging:$room_version"
+
+    // compileOnly files ("/Applications/Unity/Hub/Editor/2022.2.13f1/PlaybackEngines/AndroidPlayer/Variations/mono/Release/Classes/classes.jar")
 }
