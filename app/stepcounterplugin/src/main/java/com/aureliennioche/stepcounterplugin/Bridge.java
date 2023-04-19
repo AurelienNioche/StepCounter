@@ -46,8 +46,8 @@ public class Bridge {
 
     public int numberOfStepSinceLastBoot() {
         int stepNumber = 0;
-        List<StepRecord> stepRecords = stepDao.getAll();
-        if (stepRecords.size() >0 ) {
+        List<StepRecord>stepRecords = stepDao.getAll();
+        if (stepRecords.size() > 0 ) {
             StepRecord lastStepRecord = stepRecords.get(0);
             stepNumber = lastStepRecord.stepNumber;
         } else {

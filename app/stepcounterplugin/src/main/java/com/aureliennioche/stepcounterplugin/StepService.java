@@ -80,6 +80,7 @@ public class StepService extends Service implements SensorEventListener {
         Toast.makeText(this, "Service destroyed", Toast.LENGTH_SHORT).show();
 
         sensorManager.unregisterListener(this);
+        super.onDestroy();
     }
 
     private void createNotificationChannel() {
@@ -123,10 +124,10 @@ public class StepService extends Service implements SensorEventListener {
         stepDao.nukeTable();
 
         Log.d(tag, "Let's record new stuff");
-        Date sqlDate = new java.sql.Date(System.currentTimeMillis());
+        Date sqlDate = new Date(System.currentTimeMillis());
         stepDao.insertStepRecord(new StepRecord(sqlDate, sensorValue));
 
-        // Log what is already in the database (we might want to do something else later on)
+         // Log what is already in the database (we might want to do something else later on)
         logRecords();
     }
 

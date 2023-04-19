@@ -5,23 +5,26 @@
     <uses-permission android:name="android.permission.POST_NOTIFICATIONS" />
     <uses-permission android:name="android.permission.ACTIVITY_RECOGNITION" />
     <uses-permission android:name="android.permission.RECEIVE_BOOT_COMPLETED" />
-<!--    <uses-permission android:name="android.permission.REQUEST_IGNORE_BATTERY_OPTIMIZATIONS" />-->
     <application
         android:allowBackup="true"
-        android:dataExtractionRules="@xml/data_extraction_rules"
-        android:fullBackupContent="@xml/backup_rules"
         android:icon="@mipmap/ic_launcher"
         android:label="@string/app_name"
-        android:supportsRtl="true"
-        android:theme="@style/Theme.StepCounter"
-        tools:targetApi="33">
+        android:roundIcon="@mipmap/ic_launcher_round"
+        android:supportsRtl="true">
         <activity
             android:name=".MainActivity"
-            android:exported="true">
+            android:exported="true" >
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
+        </activity>
+        <activity
+            android:name="com.aureliennioche.stepcounter.MainUnityActivity"
+            android:screenOrientation="fullSensor"
+            android:configChanges="mcc|mnc|locale|touchscreen|keyboard|keyboardHidden|navigation|orientation|screenLayout|uiMode|screenSize|smallestScreenSize|fontScale|layoutDirection|density"
+            android:hardwareAccelerated="false"
+            android:process=":Unity">
         </activity>
         <service android:name="com.aureliennioche.stepcounterplugin.StepService"> </service>
         <receiver
@@ -33,8 +36,8 @@
             </intent-filter>
         </receiver>
     </application>
-    <!--     To avoid error 'attributionTag ...' which is thrown when service is restarted after a reboot-->
-    <attribution
-        android:tag=""
-        android:label="@string/dummy_attribution_label" />
+    <!--    &lt;!&ndash;     To avoid error 'attributionTag ...' which is thrown when service is restarted after a reboot&ndash;&gt;-->
+    <!--    <attribution-->
+    <!--        android:tag=""-->
+    <!--        android:label="@string/dummy_attribution_label" />-->
 </manifest>
