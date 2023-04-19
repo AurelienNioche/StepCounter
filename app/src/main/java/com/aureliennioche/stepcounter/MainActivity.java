@@ -5,6 +5,8 @@ import android.os.Build;
 import android.os.Bundle;
 import android.util.Log;
 
+import androidx.activity.result.ActivityResultLauncher;
+import androidx.activity.result.contract.ActivityResultContracts;
 import androidx.annotation.RequiresApi;
 import androidx.appcompat.app.AppCompatActivity;
 
@@ -26,6 +28,10 @@ public class MainActivity extends AppCompatActivity {
         Intent intent = new Intent(MainActivity.this, MainUnityActivity.class);
         MainActivity.this.startActivity(intent);
         intent.setFlags(Intent.FLAG_ACTIVITY_REORDER_TO_FRONT);
-        startActivityForResult(intent, 1);
+        startActivityIntent.launch(intent);
     }
+
+    ActivityResultLauncher<Intent> startActivityIntent = registerForActivityResult(
+            new ActivityResultContracts.StartActivityForResult(),
+            result -> {});
 }
